@@ -8,6 +8,7 @@ public class Ball : MonoBehaviour
     [SerializeField] float _speed;
     public bool _isDown = true;
     private bool _isFirstClick = false;
+    Vector2 _lastVelocity;
 
     void Awake()
     {
@@ -19,6 +20,7 @@ public class Ball : MonoBehaviour
     void Update()
     {
         FirstMove();
+        _lastVelocity = rigid.velocity;
         Debug.Log(rigid.velocity);
     }
 
@@ -39,21 +41,17 @@ public class Ball : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Wall"))
+        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Brick"))
         {
-            //_isDown = !_isDown;
-
-            //if (_isDown)
-            //{
-            //    rigid.velocity = Vector2.up * _speed;
-            //}
-            //else
-            //{
-            //    rigid.velocity = Vector2.down * _speed;
-            //}
-
-            rigid.velocity = new Vector2(0, -1 * _speed);
+            float curSpeed = _lastVelocity.magnitude;              // 벡터의 크기만큼 지역변수로 저장
+            Vector2 dir = Vector2.Reflect(_lastVelocity.normalized, collision.contacts[0].normal);       // 충돌 당시 속도의 크기만큼 반사각 결정, normalize하여 벡터의 크기를 1로 설정
+            rigid.velocity = dir * Mathf.Max(curSpeed, 0f);        // 그 다음 볼의 속도를 반사각 벡터의 방향으로 스피드만큼 곱함
         }
+
+        //if (collision.gameObject.CompareTag("Brick"))
+        //{
+        //    collision.gameObject.SendMessage("ChangeHP");
+        //}
     }
 
     public float GetSpeed()
