@@ -7,13 +7,19 @@ public enum eBrickType
     NONE = -1,
     NORMAL = 0,
     HARD = 1,
-    ITEM
+    BONUS_BALL = 2,
+    MISSILE = 3,
+    LASER_HORIZONTAL = 4,
+    LASER_VERTICAL = 5,
+    PADDLE_SHORTEN = 6,
+    PADDLE_LENGTHEN
 }
 
 public class Brick : MonoBehaviour
 {
     [SerializeField] eBrickType type;
-    public int _brickHP;
+    [SerializeField] int _brickHP;
+    [SerializeField] int _curHP;
 
     void Start()
     {
@@ -26,6 +32,8 @@ public class Brick : MonoBehaviour
                 _brickHP = 1;
                 break;
         }
+
+        _curHP = _brickHP;
     }
 
     void Update()
@@ -37,22 +45,12 @@ public class Brick : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Ball"))
         {
-            _brickHP--;
+            _curHP--;
 
-            if (_brickHP <= 0)
+            if (_curHP <= 0)
             {
                 gameObject.SetActive(false);
             }
         }
     }
-
-    //public void ChangeHP()
-    //{
-    //    _brickHP--;
-
-    //    if(_brickHP <=0)
-    //    {
-    //        gameObject.SetActive(false);
-    //    }
-    //}
 }
