@@ -20,6 +20,8 @@ public class HealthBar : MonoBehaviour
             GameObject hpSlider = Instantiate(_hpSlider, brickArray[i].transform.position, Quaternion.identity, transform);
             hpSlider.transform.position = _main.WorldToScreenPoint(brickArray[i].transform.position + new Vector3(0, -0.25f, 0));
             hpSlider.GetComponent<Slider>().value = 1;
+            brickArray[i].GetComponent<Brick>().SetHPBar(hpSlider);
+            hpSlider.SetActive(false);
             _hpSliderList.Add(hpSlider);
         }
     }
