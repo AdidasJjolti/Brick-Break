@@ -7,8 +7,7 @@ public class Ball : MonoBehaviour
     Rigidbody2D rigid;
     [SerializeField] float _speed;
     [SerializeField] float _degree;
-    public bool _isDown = true;
-    private bool _isFirstClick = false;
+    public bool _isFirstClick = false;
     Vector2 _lastVelocity;
 
     void Awake()
@@ -22,7 +21,7 @@ public class Ball : MonoBehaviour
     {
         FirstMove();
         _lastVelocity = rigid.velocity;
-        Debug.Log(rigid.velocity);
+        //Debug.Log(rigid.velocity);
 
         //if (_degree < 10)
         //{
@@ -39,10 +38,10 @@ public class Ball : MonoBehaviour
         //    rigid.velocity = dir * Mathf.Max(curSpeed, 0f);        // 그 다음 볼의 속도를 반사각 벡터의 방향으로 스피드만큼 곱함
         //}
 
-        //if(_lastVelocity.magnitude < _speed)
-        //{
-        //    _lastVelocity = _lastVelocity.normalized * _speed;
-        //}
+        if (_lastVelocity.magnitude < _speed)
+        {
+            _lastVelocity = _lastVelocity.normalized * _speed;
+        }
     }
 
     void FixedUpdate()
@@ -74,6 +73,12 @@ public class Ball : MonoBehaviour
 
             rigid.velocity = dir * Mathf.Max(curSpeed, 0f);        // 그 다음 볼의 속도를 반사각 벡터의 방향으로 스피드만큼 곱함
         }
+    }
+
+    // 씬을 불러올 때 _isFirstClick을 false로 세팅할 함수, GameManager에서 다음씬 로드할 때 메시지를 받아 호출됨
+    public void SetFirstClick()
+    {
+        _isFirstClick = false;
     }
 
     public float GetSpeed()

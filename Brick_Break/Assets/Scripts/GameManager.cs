@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] int _brickCount;
 
     private static GameManager instance;
+    [SerializeField] Ball _ball;
 
     public static GameManager Instance
     {
@@ -39,12 +40,25 @@ public class GameManager : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
-        SetBrickCount();
+
+    }
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+                _ball = FindObjectOfType<Ball>();
+        SetBrickCount();          // 첫번째 씬 로드할 때 벽돌 갯수 체크
+        _ball.SetFirstClick();
     }
 
     void Start()
     {
         _ballCount = 1;
+        //SetBrickCount();          // 첫번째 씬 로드할 때 벽돌 갯수 체크
     }
 
     void Update()
@@ -76,9 +90,15 @@ public class GameManager : MonoBehaviour
         _brickCount = bricks.Length;
     }
 
+    // Brick.cs에서 벽돌 비활성화 할 때 메시지를 받아 벽돌 카운트 차감
     public void ChangeBrickCount()
     {
         _brickCount--;
+
+        if(_brickCount <= 0)
+        {
+            SetVictory();
+        }
     }
 
     public void SetVictory()
@@ -88,6 +108,9 @@ public class GameManager : MonoBehaviour
             Debug.Log("Clear!");
         }
 
+        // 스테이지 클리어 시 다음 씬 불러오고 해당 씬에 있는 벽돌 갯수 체크
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        _ball.SetFirstClick();
+        //Invoke("SetBrickCount", 1f);
     }
 }
