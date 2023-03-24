@@ -8,7 +8,7 @@ public class Paddle : MonoBehaviour
     Camera cam;                // 메인 카메라
     float _minX = -2.5f;
     float _maxX = 2.5f;
-    float _maxBounceAngle = 80f;
+    float _maxBounceAngle = 70f;
 
     void Awake()
     {

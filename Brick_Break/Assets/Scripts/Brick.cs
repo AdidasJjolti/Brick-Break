@@ -16,12 +16,12 @@ public enum eBrickType
     PADDLE_LENGTHEN
 }
 
-public class Brick : MonoBehaviour
+public abstract class Brick : MonoBehaviour
 {
     [SerializeField] eBrickType type;
     [SerializeField] float _brickHP;
     [SerializeField] float _curHP;
-    GameObject _hpBar;
+    public Slider _hpBar;
 
     void Start()
     {
@@ -38,18 +38,13 @@ public class Brick : MonoBehaviour
         _curHP = _brickHP;
     }
 
-    void Update()
-    {
-
-    }
-
     void OnCollisionEnter2D(Collision2D collision)
     {
         if(collision.gameObject.CompareTag("Ball"))
         {
             _curHP--;
             HPBarChanged();
-            _hpBar.SetActive(true);
+            _hpBar.gameObject.SetActive(true);
 
             if (_curHP <= 0)
             {
@@ -59,9 +54,9 @@ public class Brick : MonoBehaviour
         }
     }
 
-    public void SetHPBar(GameObject hpBar)
+    public virtual void SetHPBar(GameObject hpBar)
     {
-        _hpBar = hpBar;
+        _hpBar = hpBar.GetComponent<Slider>();
     }
 
 
@@ -76,7 +71,7 @@ public class Brick : MonoBehaviour
     {
         if(_hpBar != null)
         {
-            _hpBar.SetActive(false);
+            _hpBar.gameObject.SetActive(false);
         }
     }
 }
