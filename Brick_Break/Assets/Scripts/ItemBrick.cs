@@ -5,8 +5,26 @@ using UnityEngine.UI;
 
 public class ItemBrick : Brick
 {
-    public override void SetHPBar(GameObject hpBar)
+    //public override void SetHPBar(GameObject hpBar)
+    //{
+    //    _hpBar = hpBar.GetComponent<Slider>();
+    //}
+
+    Paddle _paddle;
+
+    void Start()
     {
-        _hpBar = hpBar.GetComponent<Slider>();
+        _paddle = FindObjectOfType<Paddle>();
+    }
+
+    void OnDisable()
+    {
+        switch(Type)
+        {
+            case eBrickType.PADDLE_LENGTHEN:
+                _paddle.SendMessage("LengthenPaddle");
+                break;
+        }
+        DisableHPBar();
     }
 }

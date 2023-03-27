@@ -54,4 +54,14 @@ public class Paddle : MonoBehaviour
             ball.GetComponent<Rigidbody2D>().velocity = rotation * Vector2.up * ball.GetSpeed();
         }
     }
+
+    void LengthenPaddle()
+    {
+        this.transform.localScale = new Vector3(this.transform.localScale.x * 1.5f, this.transform.localScale.y, this.transform.localScale.z);
+    }
+
+    void ShortenPaddle()
+    {
+        this.transform.localScale = new Vector3(this.transform.localScale.x * 0.5f, this.transform.localScale.y, this.transform.localScale.z);
+    }
 }
