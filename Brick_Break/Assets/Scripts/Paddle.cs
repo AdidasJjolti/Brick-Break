@@ -10,10 +10,15 @@ public class Paddle : MonoBehaviour
     float _maxX = 2.5f;
     float _maxBounceAngle = 70f;
 
+    float _scaleX;
+    [SerializeField] uint _lengthenCount;        // 막대기 늘리기 효과 지속 횟수
+    [SerializeField] uint _shortenCount;         // 막대기 줄이기 효과 지속 횟수
+
     void Awake()
     {
         rigidbody = GetComponent<Rigidbody2D>();
         cam = Camera.main;
+        _scaleX = this.transform.localScale.x;
     }
 
     void Update()
@@ -40,7 +45,7 @@ public class Paddle : MonoBehaviour
     {
         Ball ball = collision.gameObject.GetComponent<Ball>();
 
-        if(ball != null)
+        if (ball != null)
         {
             Vector3 paddlePosition = transform.position;
             Vector2 contactPosition = collision.GetContact(0).point;
@@ -52,16 +57,41 @@ public class Paddle : MonoBehaviour
 
             Quaternion rotation = Quaternion.AngleAxis(bounceAngle, Vector3.forward);
             ball.GetComponent<Rigidbody2D>().velocity = rotation * Vector2.up * ball.GetSpeed();
+
+            CheckCount(ref _lengthenCount);
+            CheckCount(ref _shortenCount);
         }
     }
 
     void LengthenPaddle()
     {
-        this.transform.localScale = new Vector3(this.transform.localScale.x * 1.5f, this.transform.localScale.y, this.transform.localScale.z);
+        _lengthenCount = 2;
+        this.transform.localScale = new Vector3(_scaleX * 1.5f, this.transform.localScale.y, this.transform.localScale.z);
     }
 
     void ShortenPaddle()
     {
-        this.transform.localScale = new Vector3(this.transform.localScale.x * 0.5f, this.transform.localScale.y, this.transform.localScale.z);
+        _shortenCount = 2;
+        this.transform.localScale = new Vector3(_scaleX * 0.5f, this.transform.localScale.y, this.transform.localScale.z);
+    }
+
+    // lengthenCount, shortenCount를 체크할 공통 함수
+    void CheckCount(ref uint count)
+    {
+        if (count > 0)
+        {
+            count--;
+
+            if (count == 0)
+            {
+                ResetSizeX();
+            }
+        }
+    }
+
+    // lengthenCount 또는 shortenCount가 0이 되었을 때 막대기 사이즈를 원복시킬 함수
+    void ResetSizeX()
+    {
+        this.transform.localScale = new Vector3(_scaleX, this.transform.localScale.y, this.transform.localScale.z);
     }
 }

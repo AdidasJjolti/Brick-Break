@@ -102,7 +102,8 @@ public class GameManager : MonoBehaviour
     // 씬 로드할 때 벽돌 갯수를 계산할 함수
     public void SetBrickCount()
     {
-        //GameObject[] bricks = GameObject.FindGameObjectsWithTag("Brick");      
+        //GameObject[] bricks = GameObject.FindGameObjectsWithTag("Brick");   
+        //_brickCount = bricks.Length;
         _brickCount = Transform.FindObjectsOfType<Brick>(true).Length;
     }
 
@@ -115,6 +116,11 @@ public class GameManager : MonoBehaviour
         {
             SetVictory();
         }
+    }
+
+    public void AddBallCount()
+    {
+        _ballCount++;
     }
 
     public void SetVictory()
