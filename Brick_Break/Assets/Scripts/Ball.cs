@@ -44,10 +44,6 @@ public class Ball : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
-    {
-
-    }
 
     void FirstMove()
     {
@@ -56,6 +52,8 @@ public class Ball : MonoBehaviour
             _isFirstClick = true;
             gameObject.transform.parent = null;
             rigid.velocity = Vector2.up * _speed;
+
+            BrickData.GetBrickData().AddDictionary();
         }
     }
 

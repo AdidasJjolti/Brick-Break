@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Paddle : MonoBehaviour
@@ -13,6 +11,7 @@ public class Paddle : MonoBehaviour
     float _scaleX;
     [SerializeField] uint _lengthenCount;        // 막대기 늘리기 효과 지속 횟수
     [SerializeField] uint _shortenCount;         // 막대기 줄이기 효과 지속 횟수
+    [SerializeField] uint _missileCount;         // 막대기 줄이기 효과 지속 횟수
 
     void Awake()
     {
@@ -60,6 +59,7 @@ public class Paddle : MonoBehaviour
 
             CheckCount(ref _lengthenCount);
             CheckCount(ref _shortenCount);
+            CheckMissileCount(ref _missileCount);
         }
     }
 
@@ -75,7 +75,13 @@ public class Paddle : MonoBehaviour
         this.transform.localScale = new Vector3(_scaleX * 0.5f, this.transform.localScale.y, this.transform.localScale.z);
     }
 
+    void GetMissileCount()
+    {
+        _missileCount = 2;
+    }
+
     // lengthenCount, shortenCount를 체크할 공통 함수
+    // ref를 활용하여 멤버 변수 각 카운트에 직접 접근
     void CheckCount(ref uint count)
     {
         if (count > 0)
@@ -85,6 +91,19 @@ public class Paddle : MonoBehaviour
             if (count == 0)
             {
                 ResetSizeX();
+            }
+        }
+    }
+
+    void CheckMissileCount(ref uint count)
+    {
+        if (count > 0)
+        {
+            count--;
+
+            if (count == 0)
+            {
+                BrickData.GetBrickData().NotifyObservers(-1, false);       // 키값이 -1일 때 isTrigger를 false로 만들어 줌
             }
         }
     }

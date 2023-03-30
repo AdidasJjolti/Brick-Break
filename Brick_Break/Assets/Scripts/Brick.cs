@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using ObserverPattern;
 
 public enum eBrickType
 {
@@ -16,7 +17,7 @@ public enum eBrickType
     PADDLE_LENGTHEN
 }
 
-public class Brick : MonoBehaviour
+public class Brick : MonoBehaviour, IObserver
 {
     [SerializeField] eBrickType type;
     public eBrickType Type
@@ -29,7 +30,13 @@ public class Brick : MonoBehaviour
 
     [SerializeField] float _brickHP;
     [SerializeField] float _curHP;
+    BoxCollider2D _collider;
     public Slider _hpBar;
+
+    void Awake()
+    {
+        _collider = GetComponent<BoxCollider2D>();
+    }
 
     void Start()
     {
@@ -54,25 +61,33 @@ public class Brick : MonoBehaviour
         }
     }
 
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ball"))
+        {
+            BreakBrick();
+        }
+    }
+
     public void SetHPBar(GameObject hpBar)
     {
         _hpBar = hpBar.GetComponent<Slider>();
     }
 
 
-    // º®µ¹ÀÌ ÇÇ°Ý´çÇÒ ¶§¸¶´Ù HP¹Ù ¿µ¿ªÀ» ¹Ý¿µÇÏ±â À§ÇÑ ÇÔ¼ö
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç°Ý´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ HPï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ý¿ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
     public void HPBarChanged()
     {
         _hpBar.GetComponent<Slider>().value = _curHP / _brickHP;
     }
 
-    // º®µ¹ÀÌ ºñÈ°¼ºÈ­µÉ ¶§ HP¹Ùµµ ºñÈ°¼ºÈ­ Ã³¸®
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­ï¿½ï¿½ ï¿½ï¿½ HPï¿½Ùµï¿½ ï¿½ï¿½È°ï¿½ï¿½È­ Ã³ï¿½ï¿½
     void OnDisable()
     {
         DisableHPBar();
     }
 
-    // º®µ¹ ±ú±â¿¡ °øÅëÀ¸·Î »ç¿ëÇÒ ÄÚµå¸¦ ÇÔ¼ö·Î ¸¸µé±â : OnCollisionEnter2D, OnTriggerEnter2D¿¡ »ç¿ë
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµå¸¦ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ : OnCollisionEnter2D, OnTriggerEnter2Dï¿½ï¿½ ï¿½ï¿½ï¿½
     public void BreakBrick()
     {
         _curHP--;
@@ -92,5 +107,10 @@ public class Brick : MonoBehaviour
         {
             _hpBar.gameObject.SetActive(false);
         }
+    }
+
+    public void SwitchOnTrigger(bool isTrigger)
+    {
+        _collider.isTrigger = isTrigger;
     }
 }
