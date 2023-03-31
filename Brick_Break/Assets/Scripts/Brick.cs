@@ -97,6 +97,7 @@ public class Brick : MonoBehaviour, IObserver
         if (_curHP <= 0)
         {
             gameObject.SetActive(false);
+            _hpBar.gameObject.SetActive(false);
             GameManager.Instance.ChangeBrickCount();
         }
     }

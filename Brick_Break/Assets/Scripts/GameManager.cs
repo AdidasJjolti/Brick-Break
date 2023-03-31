@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject obj;
     private static GameObject gameManager;
     [SerializeField] Ball _ball;
+    [SerializeField] Paddle _paddle;
 
     public static GameManager Instance
     {
@@ -56,8 +57,10 @@ public class GameManager : MonoBehaviour
     public void Init()
     {
         _ball = FindObjectOfType<Ball>();
+        _paddle = FindObjectOfType<Paddle>();
         SetBrickCount();          // 첫번째 씬 로드할 때 벽돌 갯수 체크
         _ball.SetFirstClick();
+        _paddle.SendMessage("ResetItemCounts");
     }
 
     void Start()

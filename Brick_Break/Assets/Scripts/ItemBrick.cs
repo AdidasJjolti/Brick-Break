@@ -76,6 +76,23 @@ public class ItemBrick : Brick
                 BrickData.GetBrickData().NotifyObservers(gameObject.GetInstanceID(), true);                    // 각 ItemBrick의 고유한 ID값을 불러오는 함수
                 _paddle.SendMessage("GetMissileCount");
                 break;
+
+            case eBrickType.LASER_HORIZONTAL:
+                Ball[] horiballs = FindObjectsOfType<Ball>();          // 가로 레이저 적용할 볼의 배열
+                for(int i = 0; i < horiballs.Length; i++)
+                {
+                    horiballs[i].SetHorizontalLaser();
+                }
+                _paddle.SendMessage("GetHorizontalLaserCount");
+                break;
+            case eBrickType.LASER_VERTICAL:
+                Ball[] vertballs = FindObjectsOfType<Ball>();         // 세로 레이저 적용할 볼의 배열
+                for (int i = 0; i < vertballs.Length; i++)
+                {
+                    vertballs[i].SetVerticalLaser();
+                }
+                _paddle.SendMessage("GetVerticalLaserCount");
+                break;
         }
         DisableHPBar();
     }

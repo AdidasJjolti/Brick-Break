@@ -11,7 +11,9 @@ public class Paddle : MonoBehaviour
     float _scaleX;
     [SerializeField] uint _lengthenCount;        // 막대기 늘리기 효과 지속 횟수
     [SerializeField] uint _shortenCount;         // 막대기 줄이기 효과 지속 횟수
-    [SerializeField] uint _missileCount;         // 막대기 줄이기 효과 지속 횟수
+    [SerializeField] uint _missileCount;         // 미사일 효과 지속 횟수
+    [SerializeField] uint _horLaserCount;         // 가로 레이저 효과 지속 횟수
+    [SerializeField] uint _verLaserCount;         // 세로 레이저 효과 지속 횟수
 
     void Awake()
     {
@@ -57,9 +59,13 @@ public class Paddle : MonoBehaviour
             Quaternion rotation = Quaternion.AngleAxis(bounceAngle, Vector3.forward);
             ball.GetComponent<Rigidbody2D>().velocity = rotation * Vector2.up * ball.GetSpeed();
 
+
+            // 횟수 제한이 있는 아이템 효과 카운트를 체크하는 함수, 효과 만료 시 원래 상태로 복구하는 기능
             CheckCount(ref _lengthenCount);
             CheckCount(ref _shortenCount);
             CheckMissileCount(ref _missileCount);
+            CheckHorizontalLaserCount(ref _horLaserCount);
+            CheckVerticalLaserCount(ref _verLaserCount);
         }
     }
 
@@ -78,6 +84,16 @@ public class Paddle : MonoBehaviour
     void GetMissileCount()
     {
         _missileCount = 2;
+    }
+
+    void GetHorizontalLaserCount()
+    {
+        _horLaserCount = 2;
+    }
+
+    void GetVerticalLaserCount()
+    {
+        _verLaserCount = 20;
     }
 
     // lengthenCount, shortenCount를 체크할 공통 함수
@@ -108,9 +124,62 @@ public class Paddle : MonoBehaviour
         }
     }
 
+    void CheckHorizontalLaserCount(ref uint count)
+    {
+        if (count > 0)
+        {
+            count--;
+
+            if (count == 0)
+            {
+                ResetHorizontalLaser();
+            }
+        }
+    }
+
+    void CheckVerticalLaserCount(ref uint count)
+    {
+        if (count > 0)
+        {
+            count--;
+
+            if (count == 0)
+            {
+                ResetVerticalalLaser();
+            }
+        }
+    }
+
     // lengthenCount 또는 shortenCount가 0이 되었을 때 막대기 사이즈를 원복시킬 함수
     void ResetSizeX()
     {
         this.transform.localScale = new Vector3(_scaleX, this.transform.localScale.y, this.transform.localScale.z);
+    }
+
+    void ResetHorizontalLaser()
+    {
+        Ball[] balls = FindObjectsOfType<Ball>();
+        for (int i = 0; i < balls.Length; i++)
+        {
+            balls[i].SetHorizontalLaser();
+        }
+    }
+
+    void ResetVerticalalLaser()
+    {
+        Ball[] balls = FindObjectsOfType<Ball>();
+        for (int i = 0; i < balls.Length; i++)
+        {
+            balls[i].SetVerticalLaser();
+        }
+    }
+
+    public void ResetItemCounts()
+    {
+        _lengthenCount = 0;        // 막대기 늘리기 효과 지속 횟수
+        _shortenCount = 0;         // 막대기 줄이기 효과 지속 횟수
+        _missileCount = 0;         // 미사일 효과 지속 횟수
+        _horLaserCount = 0;         // 가로 레이저 효과 지속 횟수
+        _verLaserCount = 0;         // 세로 레이저 효과 지속 횟수
     }
 }
