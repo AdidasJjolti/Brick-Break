@@ -239,6 +239,7 @@ public class Paddle : MonoBehaviour
 
             uint tempCount = 0;
 
+            // 아이템 효과를 받는 아이템의 타입에 따라 각각 다른 카운트를 업데이트해서 넘겨줌
             switch(_objList[i].type)
             {
                 case eBrickType.PADDLE_LENGTHEN:
