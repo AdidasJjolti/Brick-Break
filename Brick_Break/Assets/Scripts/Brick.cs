@@ -46,7 +46,7 @@ public class Brick : MonoBehaviour, IObserver
                 _brickHP = 10;
                 break;
             default:
-                _brickHP = 1;
+                _brickHP = 5;
                 break;
         }
 

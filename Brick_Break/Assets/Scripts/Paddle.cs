@@ -1,4 +1,7 @@
 using UnityEngine;
+using UnityEngine.UI;
+using System.Collections.Generic;
+using System;
 
 public class Paddle : MonoBehaviour
 {
@@ -9,11 +12,15 @@ public class Paddle : MonoBehaviour
     float _maxBounceAngle = 70f;
 
     float _scaleX;
-    [SerializeField] uint _lengthenCount;        // 막대기 늘리기 효과 지속 횟수
-    [SerializeField] uint _shortenCount;         // 막대기 줄이기 효과 지속 횟수
-    [SerializeField] uint _missileCount;         // 미사일 효과 지속 횟수
+    [SerializeField] uint _lengthenCount;         // 막대기 늘리기 효과 지속 횟수
+    [SerializeField] uint _shortenCount;          // 막대기 줄이기 효과 지속 횟수
+    [SerializeField] uint _missileCount;          // 미사일 효과 지속 횟수
     [SerializeField] uint _horLaserCount;         // 가로 레이저 효과 지속 횟수
     [SerializeField] uint _verLaserCount;         // 세로 레이저 효과 지속 횟수
+    [SerializeField] Sprite[] _itemSprites;       // 0 : 막대기 확장, 1 : 막대기 축소, 2 : 미사일, 3: 가로 레이저, 4 : 세로 레이저
+    [SerializeField] GameObject _objitemEffect;
+    [SerializeField] GameObject _skillEffectUI;
+    [SerializeField] List<(eBrickType type, GameObject obj)> _objList = new List<(eBrickType, GameObject)>();
 
     void Awake()
     {
@@ -66,34 +73,76 @@ public class Paddle : MonoBehaviour
             CheckMissileCount(ref _missileCount);
             CheckHorizontalLaserCount(ref _horLaserCount);
             CheckVerticalLaserCount(ref _verLaserCount);
+            ChangeItemCount();         // 감소한 아이템 효과 횟수를 매개 변수로 전달
+
         }
     }
 
     void LengthenPaddle()
     {
-        _lengthenCount = 2;
+        _lengthenCount = 50;
         this.transform.localScale = new Vector3(_scaleX * 1.5f, this.transform.localScale.y, this.transform.localScale.z);
+
+        // 아이템 효과 UI 게임 오브젝트를 생성
+        GameObject obj = Instantiate(_objitemEffect, _skillEffectUI.transform.position, Quaternion.identity, _skillEffectUI.transform);
+        obj.transform.localScale = new Vector3(1, 1, 1);
+        obj.transform.parent = _skillEffectUI.transform;
+        _objList.Add((eBrickType.PADDLE_LENGTHEN, obj));
+        obj.GetComponent<UIItem>().SetItemImage(_itemSprites[0]);
+        obj.GetComponent<UIItem>().SetItemCount(_lengthenCount);
     }
 
     void ShortenPaddle()
     {
-        _shortenCount = 2;
+        _shortenCount = 10;
         this.transform.localScale = new Vector3(_scaleX * 0.5f, this.transform.localScale.y, this.transform.localScale.z);
+
+        // 아이템 효과 UI 게임 오브젝트를 생성
+        GameObject obj = Instantiate(_objitemEffect, _skillEffectUI.transform.position, Quaternion.identity, _skillEffectUI.transform);
+        obj.transform.localScale = new Vector3(1, 1, 1);
+        obj.transform.parent = _skillEffectUI.transform;
+        _objList.Add((eBrickType.PADDLE_SHORTEN, obj));
+        obj.GetComponent<UIItem>().SetItemImage(_itemSprites[1]);
+        obj.GetComponent<UIItem>().SetItemCount(_shortenCount);
     }
 
     void GetMissileCount()
     {
-        _missileCount = 2;
+        _missileCount = 15;
+
+        // 아이템 효과 UI 게임 오브젝트를 생성
+        GameObject obj = Instantiate(_objitemEffect, _skillEffectUI.transform.position, Quaternion.identity, _skillEffectUI.transform);
+        obj.transform.localScale = new Vector3(1, 1, 1);
+        obj.transform.parent = _skillEffectUI.transform;
+        _objList.Add((eBrickType.MISSILE, obj));
+        obj.GetComponent<UIItem>().SetItemImage(_itemSprites[2]);
+        obj.GetComponent<UIItem>().SetItemCount(_missileCount);
     }
 
     void GetHorizontalLaserCount()
     {
-        _horLaserCount = 2;
+        _horLaserCount = 13;
+
+        // 아이템 효과 UI 게임 오브젝트를 생성
+        GameObject obj = Instantiate(_objitemEffect, _skillEffectUI.transform.position, Quaternion.identity, _skillEffectUI.transform);
+        obj.transform.localScale = new Vector3(1, 1, 1);
+        obj.transform.parent = _skillEffectUI.transform;
+        _objList.Add((eBrickType.LASER_HORIZONTAL, obj));
+        obj.GetComponent<UIItem>().SetItemImage(_itemSprites[3]);
+        obj.GetComponent<UIItem>().SetItemCount(_horLaserCount);
     }
 
     void GetVerticalLaserCount()
     {
-        _verLaserCount = 20;
+        _verLaserCount = 17;
+
+        // 아이템 효과 UI 게임 오브젝트를 생성
+        GameObject obj = Instantiate(_objitemEffect, _skillEffectUI.transform.position, Quaternion.identity, _skillEffectUI.transform);
+        obj.transform.localScale = new Vector3(1, 1, 1);
+        obj.transform.parent = _skillEffectUI.transform;
+        _objList.Add((eBrickType.LASER_VERTICAL, obj));
+        obj.GetComponent<UIItem>().SetItemImage(_itemSprites[4]);
+        obj.GetComponent<UIItem>().SetItemCount(_verLaserCount);
     }
 
     // lengthenCount, shortenCount를 체크할 공통 함수
@@ -102,6 +151,7 @@ public class Paddle : MonoBehaviour
     {
         if (count > 0)
         {
+            // count : 볼이 패들에 충돌하여 감소한 아이템 효과 횟수
             count--;
 
             if (count == 0)
@@ -117,6 +167,7 @@ public class Paddle : MonoBehaviour
         {
             count--;
 
+
             if (count == 0)
             {
                 BrickData.GetBrickData().NotifyObservers(-1, false);       // 키값이 -1일 때 isTrigger를 false로 만들어 줌
@@ -130,6 +181,7 @@ public class Paddle : MonoBehaviour
         {
             count--;
 
+
             if (count == 0)
             {
                 ResetHorizontalLaser();
@@ -142,6 +194,7 @@ public class Paddle : MonoBehaviour
         if (count > 0)
         {
             count--;
+
 
             if (count == 0)
             {
@@ -171,6 +224,51 @@ public class Paddle : MonoBehaviour
         for (int i = 0; i < balls.Length; i++)
         {
             balls[i].SetVerticalLaser();
+        }
+    }
+
+    // 아이템UI의 카운트를 변경할 공통 함수
+    public void ChangeItemCount()
+    {
+        for(int i = 0; i < _objList.Count; i++)
+        {
+            if(_objList[i].obj == null)
+            {
+                continue;
+            }
+
+            uint tempCount = 0;
+
+            switch(_objList[i].type)
+            {
+                case eBrickType.PADDLE_LENGTHEN:
+                    tempCount = _lengthenCount;
+                    _objList[i].obj.GetComponent<UIItem>().CheckItemCount(_lengthenCount);           // 전달 받은 남은 아이템 효과 횟수를 아이템 효과 UI에 다시 전달하여 UI에 표시
+                    break;
+                case eBrickType.PADDLE_SHORTEN:
+                    tempCount = _shortenCount;
+                    _objList[i].obj.GetComponent<UIItem>().CheckItemCount(_shortenCount);           // 전달 받은 남은 아이템 효과 횟수를 아이템 효과 UI에 다시 전달하여 UI에 표시
+                    break;
+                case eBrickType.MISSILE:
+                    tempCount = _missileCount;
+                    _objList[i].obj.GetComponent<UIItem>().CheckItemCount(_missileCount);           // 전달 받은 남은 아이템 효과 횟수를 아이템 효과 UI에 다시 전달하여 UI에 표시
+                    break;
+                case eBrickType.LASER_HORIZONTAL:
+                    tempCount = _horLaserCount;
+                    _objList[i].obj.GetComponent<UIItem>().CheckItemCount(_horLaserCount);           // 전달 받은 남은 아이템 효과 횟수를 아이템 효과 UI에 다시 전달하여 UI에 표시
+                    break;
+                case eBrickType.LASER_VERTICAL:
+                    tempCount = _verLaserCount;
+                    _objList[i].obj.GetComponent<UIItem>().CheckItemCount(_verLaserCount);           // 전달 받은 남은 아이템 효과 횟수를 아이템 효과 UI에 다시 전달하여 UI에 표시
+                    break;
+            }
+
+            if (tempCount == 0)
+            {
+                //_objList.Remove(_objList[i]);
+                //Destroy(_objList[i]);
+                _objList[i].obj.SetActive(false);
+            }
         }
     }
 

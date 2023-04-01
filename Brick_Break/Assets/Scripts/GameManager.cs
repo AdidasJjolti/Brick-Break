@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
     private static GameObject gameManager;
     [SerializeField] Ball _ball;
     [SerializeField] Paddle _paddle;
+    [SerializeField] GameObject _gameOverUI;
+    int gameScene;
 
     public static GameManager Instance
     {
@@ -41,6 +43,9 @@ public class GameManager : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
+        gameScene = SceneManager.GetActiveScene().buildIndex;
+        //_gameOverUI = GameObject.Find("GameOverUI");
+        //_gameOverUI.SetActive(false);
 
     }
 
@@ -51,14 +56,20 @@ public class GameManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Init();
+        if(gameScene == SceneManager.GetActiveScene().buildIndex)
+        {
+            Init();
+        }
     }
 
     public void Init()
     {
+        _ballCount = 1;
         _ball = FindObjectOfType<Ball>();
         _paddle = FindObjectOfType<Paddle>();
-        SetBrickCount();          // Ã¹¹øÂ° ¾À ·ÎµåÇÒ ¶§ º®µ¹ °¹¼ö Ã¼Å©
+        _gameOverUI = GameObject.Find("Canvas").transform.Find("GameOverUI").gameObject;
+        _gameOverUI.SetActive(false);
+        SetBrickCount();          // Ã¹ï¿½ï¿½Â° ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼Å©
         _ball.SetFirstClick();
         _paddle.SendMessage("ResetItemCounts");
     }
@@ -76,15 +87,15 @@ public class GameManager : MonoBehaviour
         }
         else if(Input.GetKeyDown(KeyCode.Alpha1))
         {
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene(1);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene(2);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            SceneManager.LoadScene(2);
+            SceneManager.LoadScene(3);
         }
     }
 
@@ -98,11 +109,12 @@ public class GameManager : MonoBehaviour
             {
                 collision.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
                 Debug.Log("Trigger Game Over");
+                SetGameOver();
             }
         }
     }
 
-    // ¾À ·ÎµåÇÒ ¶§ º®µ¹ °¹¼ö¸¦ °è»êÇÒ ÇÔ¼ö
+    // ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
     public void SetBrickCount()
     {
         //GameObject[] bricks = GameObject.FindGameObjectsWithTag("Brick");   
@@ -110,7 +122,7 @@ public class GameManager : MonoBehaviour
         _brickCount = Transform.FindObjectsOfType<Brick>(true).Length;
     }
 
-    // Brick.cs¿¡¼­ º®µ¹ ºñÈ°¼ºÈ­ ÇÒ ¶§ ¸Þ½ÃÁö¸¦ ¹Þ¾Æ º®µ¹ Ä«¿îÆ® Â÷°¨
+    // Brick.csï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­ ï¿½ï¿½ ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
     public void ChangeBrickCount()
     {
         _brickCount--;
@@ -133,9 +145,19 @@ public class GameManager : MonoBehaviour
             Debug.Log("Clear!");
         }
 
-        // ½ºÅ×ÀÌÁö Å¬¸®¾î ½Ã ´ÙÀ½ ¾À ºÒ·¯¿À°í ÇØ´ç ¾À¿¡ ÀÖ´Â º®µ¹ °¹¼ö Ã¼Å©
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼Å©
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         _ball.SetFirstClick();
         //Invoke("SetBrickCount", 1f);
+    }
+
+    public void SetGameOver()
+    {
+        _gameOverUI.SetActive(true);
+    }
+
+    public void GoFirstScene()
+    {
+        SceneManager.LoadScene(0);
     }
 }

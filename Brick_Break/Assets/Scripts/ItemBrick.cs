@@ -27,7 +27,12 @@ public class ItemBrick : Brick
 
     void OnDisable()
     {
-        switch(Type)
+        if(_paddle == null)
+        {
+            _paddle = FindObjectOfType<Paddle>();
+        }
+
+        switch (Type)
         {
             case eBrickType.PADDLE_LENGTHEN:
                 _paddle.SendMessage("LengthenPaddle");

@@ -89,10 +89,13 @@ public class Ball : MonoBehaviour
                             continue;
                         }
 
-                        hit.transform.GetComponent<Brick>().BreakBrick();
-                        if(hit.transform.GetComponent<Brick>() == null)
+                        if(hit.transform.GetComponent<Brick>() != null)
                         {
-                            Debug.LogError("Doesn't have Brick.");
+                            hit.transform.GetComponent<Brick>().BreakBrick();
+                        }
+                        else
+                        {
+                            Debug.LogError($"Doesn't have Brick. : {hit.transform.name}");
                             break;
                         }
                     }
@@ -109,10 +112,13 @@ public class Ball : MonoBehaviour
                             continue;
                         }
 
-                        hit.transform.GetComponent<Brick>().BreakBrick();
-                        if (hit.transform.GetComponent<Brick>() == null)
+                        if (hit.transform.GetComponent<Brick>() != null)
                         {
-                            Debug.LogError("Doesn't have Brick.");
+                            hit.transform.GetComponent<Brick>().BreakBrick();
+                        }
+                        else
+                        {
+                            Debug.LogError($"Doesn't have Brick. : {hit.transform.name}");
                             break;
                         }
                     }
