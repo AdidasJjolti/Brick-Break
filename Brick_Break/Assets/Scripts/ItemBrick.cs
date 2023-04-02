@@ -8,7 +8,6 @@ using ObserverPattern;
 public class ItemBrick : Brick
 {
     Paddle _paddle;
-    Brick[] _bricks;
     [SerializeField] GameObject _newBall;
 
     List<IObserver> _observers = new List<IObserver>();
@@ -16,20 +15,32 @@ public class ItemBrick : Brick
     void Start()
     {
         _paddle = FindObjectOfType<Paddle>();
-        _bricks = FindObjectsOfType<Brick>();
     }
 
     void OnEnable()
     {
         // 각 ItemBrick의 InstanceID를 키값으로 하는 딕셔너리 생성
         BrickData.GetBrickData().InitDictionary(gameObject.GetInstanceID());
+
+        if (_paddle == null)
+        {
+            _paddle = FindObjectOfType<Paddle>();
+        }
+
     }
 
     void OnDisable()
     {
-        if(_paddle == null)
+        // 게임 오버 후 첫번째 씬으로 이동 시 막대기가 없는 상황에서는 OnDisable 함수 실행하지 않음 : 게임 오버일 때 첫번재 씬으로 이동하면서 발생하는 사이드 이펙트 수정
+        if (_paddle == null)
         {
-            _paddle = FindObjectOfType<Paddle>();
+            return;
+        }
+
+        // 게임 오버 상태일 때 발생하는 OnDisable 상황에서는 벽돌 파괴 로직을 실행하지 않음 : 게임 오버일 때 첫번재 씬으로 이동하면서 발생하는 사이드 이펙트 수정
+        if(GameManager.Instance.GetGameOver() == true)
+        {
+            return;
         }
 
         switch (Type)
@@ -42,6 +53,7 @@ public class ItemBrick : Brick
                 break;
             case eBrickType.BONUS_BALL:
                 GameObject newBall = Instantiate(_newBall, transform.position, Quaternion.identity);
+                newBall.transform.name = "Second Ball";
 
                 // 디버깅을 위한 체크 로직
                 if(newBall == null)
@@ -73,10 +85,6 @@ public class ItemBrick : Brick
                 break;
 
             case eBrickType.MISSILE:
-                //for (int i = 0; i < _bricks.Length; i++)
-                //{
-                //    _bricks[i].SendMessage("SwitchOnTrigger");
-                //}
 
                 BrickData.GetBrickData().NotifyObservers(gameObject.GetInstanceID(), true);                    // 각 ItemBrick의 고유한 ID값을 불러오는 함수
                 _paddle.SendMessage("GetMissileCount");

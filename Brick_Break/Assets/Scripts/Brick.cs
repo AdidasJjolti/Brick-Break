@@ -112,6 +112,9 @@ public class Brick : MonoBehaviour, IObserver
 
     public void SwitchOnTrigger(bool isTrigger)
     {
-        _collider.isTrigger = isTrigger;
+        if(_collider != null)
+        {
+            _collider.isTrigger = isTrigger;
+        }
     }
 }

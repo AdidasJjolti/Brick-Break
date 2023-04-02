@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] Ball _ball;
     [SerializeField] Paddle _paddle;
     [SerializeField] GameObject _gameOverUI;
+    bool _isGameOver;
     int gameScene;
 
     public static GameManager Instance
@@ -44,9 +46,6 @@ public class GameManager : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
         gameScene = SceneManager.GetActiveScene().buildIndex;
-        //_gameOverUI = GameObject.Find("GameOverUI");
-        //_gameOverUI.SetActive(false);
-
     }
 
     void OnEnable()
@@ -67,8 +66,22 @@ public class GameManager : MonoBehaviour
         _ballCount = 1;
         _ball = FindObjectOfType<Ball>();
         _paddle = FindObjectOfType<Paddle>();
+        _isGameOver = false;
         _gameOverUI = GameObject.Find("Canvas").transform.Find("GameOverUI").gameObject;
-        _gameOverUI.SetActive(false);
+        if(_gameOverUI != null)
+        {
+            _gameOverUI.SetActive(false);
+            var button = _gameOverUI.GetComponentInChildren<Button>();
+            
+            if(button != null)
+            {
+                button.onClick.RemoveAllListeners();
+                button.onClick.AddListener(() =>
+                {
+                    GoFirstScene();
+                });
+            }
+        }
         SetBrickCount();          // ù��° �� �ε��� �� ���� ���� üũ
         _ball.SetFirstClick();
         _paddle.SendMessage("ResetItemCounts");
@@ -153,11 +166,17 @@ public class GameManager : MonoBehaviour
 
     public void SetGameOver()
     {
+        _isGameOver = true;
         _gameOverUI.SetActive(true);
     }
 
     public void GoFirstScene()
     {
         SceneManager.LoadScene(0);
+    }
+
+    public bool GetGameOver()
+    {
+        return _isGameOver;
     }
 }
