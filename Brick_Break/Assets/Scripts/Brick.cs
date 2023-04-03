@@ -46,7 +46,7 @@ public class Brick : MonoBehaviour, IObserver
                 _brickHP = 10;
                 break;
             default:
-                _brickHP = 5;
+                _brickHP = 1;
                 break;
         }
 
@@ -92,6 +92,7 @@ public class Brick : MonoBehaviour, IObserver
     {
         _curHP--;
         HPBarChanged();
+        SoundManager.Instance.PlayBrickBreak();
         _hpBar.gameObject.SetActive(true);
 
         if (_curHP <= 0)

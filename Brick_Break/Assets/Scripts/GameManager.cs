@@ -59,6 +59,7 @@ public class GameManager : MonoBehaviour
         {
             Init();
         }
+        Init();
     }
 
     public void Init()
@@ -112,7 +113,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void OnTriggerExit2D(Collider2D collision)
+    void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Ball"))
         {
@@ -133,6 +134,7 @@ public class GameManager : MonoBehaviour
         //GameObject[] bricks = GameObject.FindGameObjectsWithTag("Brick");   
         //_brickCount = bricks.Length;
         _brickCount = Transform.FindObjectsOfType<Brick>(true).Length;
+        Debug.Log($"Brick Count is {_brickCount}");
     }
 
     // Brick.cs���� ���� ��Ȱ��ȭ �� �� �޽����� �޾� ���� ī��Ʈ ����
@@ -160,14 +162,23 @@ public class GameManager : MonoBehaviour
 
         // �������� Ŭ���� �� ���� �� �ҷ����� �ش� ���� �ִ� ���� ���� üũ
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        _ball.SetFirstClick();
-        //Invoke("SetBrickCount", 1f);
+
+        if(SceneManager.GetActiveScene().buildIndex + 1 == 4)
+        {
+            SoundManager.Instance.PlayEnding();
+        }
+        else
+        {
+            SoundManager.Instance.PlayVictory();
+            _ball.SetFirstClick();
+        }
     }
 
     public void SetGameOver()
     {
         _isGameOver = true;
         _gameOverUI.SetActive(true);
+        SoundManager.Instance.PlayGameOver();
     }
 
     public void GoFirstScene()
