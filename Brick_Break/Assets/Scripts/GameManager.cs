@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     private static GameObject gameManager;
     [SerializeField] Ball _ball;
     [SerializeField] Paddle _paddle;
-    [SerializeField] GameObject _gameOverUI;
+    //[SerializeField] GameObject _gameOverUI;
     bool _isGameOver;
     int gameScene;
 
@@ -65,27 +65,21 @@ public class GameManager : MonoBehaviour
     public void Init()
     {
         _ballCount = 1;
+
         _ball = FindObjectOfType<Ball>();
-        _paddle = FindObjectOfType<Paddle>();
-        _isGameOver = false;
-        _gameOverUI = GameObject.Find("Canvas").transform.Find("GameOverUI").gameObject;
-        if(_gameOverUI != null)
+        if(_ball != null)
         {
-            _gameOverUI.SetActive(false);
-            var button = _gameOverUI.GetComponentInChildren<Button>();
-            
-            if(button != null)
-            {
-                button.onClick.RemoveAllListeners();
-                button.onClick.AddListener(() =>
-                {
-                    GoFirstScene();
-                });
-            }
+            _ball.SetFirstClick();
         }
+
+        _paddle = FindObjectOfType<Paddle>();
+        if(_paddle != null)
+        {
+            _paddle.SendMessage("ResetItemCounts");
+        }
+        _isGameOver = false;
+
         SetBrickCount();          // ù��° �� �ε��� �� ���� ���� üũ
-        _ball.SetFirstClick();
-        _paddle.SendMessage("ResetItemCounts");
     }
 
     void Start()
@@ -133,7 +127,12 @@ public class GameManager : MonoBehaviour
     {
         //GameObject[] bricks = GameObject.FindGameObjectsWithTag("Brick");   
         //_brickCount = bricks.Length;
-        _brickCount = Transform.FindObjectsOfType<Brick>(true).Length;
+
+        var bricks = FindObjectsOfType<Brick>(true);
+        if(bricks != null)
+        {
+            _brickCount = Transform.FindObjectsOfType<Brick>(true).Length;
+        }
         Debug.Log($"Brick Count is {_brickCount}");
     }
 
@@ -177,7 +176,22 @@ public class GameManager : MonoBehaviour
     public void SetGameOver()
     {
         _isGameOver = true;
-        _gameOverUI.SetActive(true);
+
+        Transform gameOverUI = GameObject.Find("Canvas").transform.Find("GameOverUI");
+        if (gameOverUI != null)
+        {
+            gameOverUI.gameObject.SetActive(true);
+            var button = gameOverUI.GetComponentInChildren<Button>();
+
+            if (button != null)
+            {
+                button.onClick.RemoveAllListeners();
+                button.onClick.AddListener(() =>
+                {
+                    GoFirstScene();
+                });
+            }
+        }
         SoundManager.Instance.PlayGameOver();
     }
 
@@ -189,5 +203,10 @@ public class GameManager : MonoBehaviour
     public bool GetGameOver()
     {
         return _isGameOver;
+    }
+
+    public bool GetLaserItem()
+    {
+        return _paddle.GetLaserItem();
     }
 }

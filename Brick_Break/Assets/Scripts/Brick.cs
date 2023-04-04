@@ -38,7 +38,7 @@ public class Brick : MonoBehaviour, IObserver
         _collider = GetComponent<BoxCollider2D>();
     }
 
-    void Start()
+    protected virtual void Start()
     {
         switch((int)type)
         {
@@ -55,7 +55,7 @@ public class Brick : MonoBehaviour, IObserver
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.CompareTag("Ball"))
+        if(collision.gameObject.CompareTag("Ball") && GameManager.Instance.GetLaserItem() == false)
         {
             BreakBrick();
         }
@@ -90,16 +90,22 @@ public class Brick : MonoBehaviour, IObserver
     // ���� ���⿡ �������� ����� �ڵ带 �Լ��� ����� : OnCollisionEnter2D, OnTriggerEnter2D�� ���
     public void BreakBrick()
     {
+        if(_curHP <= 0)
+        {
+            return;
+        }
+
         _curHP--;
         HPBarChanged();
         SoundManager.Instance.PlayBrickBreak();
         _hpBar.gameObject.SetActive(true);
 
-        if (_curHP <= 0)
+        if(_curHP <= 0)
         {
-            gameObject.SetActive(false);
-            _hpBar.gameObject.SetActive(false);
             GameManager.Instance.ChangeBrickCount();
+            Debug.Log(transform.name);
+            Destroy(_hpBar.gameObject);
+            Destroy(gameObject);
         }
     }
 

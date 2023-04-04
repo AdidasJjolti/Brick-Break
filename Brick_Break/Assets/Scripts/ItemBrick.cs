@@ -12,8 +12,9 @@ public class ItemBrick : Brick
 
     List<IObserver> _observers = new List<IObserver>();
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();       // Brick.cs의 Start 함수를 실행
         _paddle = FindObjectOfType<Paddle>();
     }
 

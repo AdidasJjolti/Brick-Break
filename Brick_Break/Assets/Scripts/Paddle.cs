@@ -80,7 +80,7 @@ public class Paddle : MonoBehaviour
 
     void LengthenPaddle()
     {
-        _lengthenCount = 50;
+        _lengthenCount = 5;
         this.transform.localScale = new Vector3(_scaleX * 1.5f, this.transform.localScale.y, this.transform.localScale.z);
 
         // 아이템 효과 UI 게임 오브젝트를 생성
@@ -94,7 +94,7 @@ public class Paddle : MonoBehaviour
 
     void ShortenPaddle()
     {
-        _shortenCount = 10;
+        _shortenCount = 5;
         this.transform.localScale = new Vector3(_scaleX * 0.5f, this.transform.localScale.y, this.transform.localScale.z);
 
         // 아이템 효과 UI 게임 오브젝트를 생성
@@ -108,7 +108,7 @@ public class Paddle : MonoBehaviour
 
     void GetMissileCount()
     {
-        _missileCount = 15;
+        _missileCount = 5;
 
         // 아이템 효과 UI 게임 오브젝트를 생성
         GameObject obj = Instantiate(_objitemEffect, _skillEffectUI.transform.position, Quaternion.identity, _skillEffectUI.transform);
@@ -121,7 +121,7 @@ public class Paddle : MonoBehaviour
 
     void GetHorizontalLaserCount()
     {
-        _horLaserCount = 13;
+        _horLaserCount = 5;
 
         // 아이템 효과 UI 게임 오브젝트를 생성
         GameObject obj = Instantiate(_objitemEffect, _skillEffectUI.transform.position, Quaternion.identity, _skillEffectUI.transform);
@@ -134,7 +134,7 @@ public class Paddle : MonoBehaviour
 
     void GetVerticalLaserCount()
     {
-        _verLaserCount = 17;
+        _verLaserCount = 5;
 
         // 아이템 효과 UI 게임 오브젝트를 생성
         GameObject obj = Instantiate(_objitemEffect, _skillEffectUI.transform.position, Quaternion.identity, _skillEffectUI.transform);
@@ -280,5 +280,10 @@ public class Paddle : MonoBehaviour
         _missileCount = 0;         // 미사일 효과 지속 횟수
         _horLaserCount = 0;         // 가로 레이저 효과 지속 횟수
         _verLaserCount = 0;         // 세로 레이저 효과 지속 횟수
+    }
+
+    public bool GetLaserItem()
+    {
+        return _horLaserCount + _verLaserCount > 0;
     }
 }
